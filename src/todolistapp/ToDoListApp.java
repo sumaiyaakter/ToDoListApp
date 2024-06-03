@@ -1,11 +1,13 @@
 package todolistapp;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class ToDoListApp {
+
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel mainPanel;
@@ -49,38 +51,55 @@ public class ToDoListApp {
     }
 
     class MainMenuPanel extends JPanel {
+
         MainMenuPanel() {
-            setLayout(new GridLayout(4, 1));
-            JButton viewTasksButton = new JButton("View Tasks");
-            JButton addTaskButton = new JButton("Add Task");
-            JButton editTaskButton = new JButton("Edit Task");
-            JButton deleteTaskButton = new JButton("Delete Task");
+            setLayout(new GridLayout(8, 1));
+            setBackground(Color.WHITE);  // Set background color for the full body
+
+            Dimension buttonSize = new Dimension(300, 80);
+
+            JButton viewTasksButton = new StyledButton("View Tasks", Color.BLUE, buttonSize);
+            JButton addTaskButton = new StyledButton("Add Task", Color.lightGray, buttonSize);
+            JButton editTaskButton = new StyledButton("Edit Task", Color.BLACK, buttonSize);
+            JButton deleteTaskButton = new StyledButton("Delete Task", Color.RED, buttonSize);
 
             viewTasksButton.addActionListener(e -> showPanel("ViewTasks"));
             addTaskButton.addActionListener(e -> showPanel("AddTask"));
             editTaskButton.addActionListener(e -> showPanel("EditTask"));
             deleteTaskButton.addActionListener(e -> showPanel("DeleteTask"));
 
-            add(viewTasksButton);
-            add(addTaskButton);
-            add(editTaskButton);
-            add(deleteTaskButton);
+            add(createButtonPanel(viewTasksButton));
+            add(createButtonPanel(addTaskButton));
+            add(createButtonPanel(editTaskButton));
+            add(createButtonPanel(deleteTaskButton));
+        }
+
+        private JPanel createButtonPanel(JButton button) {
+            JPanel panel = new JPanel();
+            panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add margin
+            panel.setLayout(new BorderLayout());
+            panel.setOpaque(false);  // Make the panel transparent to show the background color of the parent panel
+            panel.add(button, BorderLayout.CENTER);
+            return panel;
         }
     }
 
     class ViewTasksPanel extends JPanel {
+
         private JTable taskTable;
         private DefaultTableModel taskTableModel;
 
         ViewTasksPanel() {
             setLayout(new BorderLayout());
+            setBackground(Color.WHITE);  // Set background color for the full body
 
             taskTableModel = new DefaultTableModel(new Object[]{"Title", "Description"}, 0);
             taskTable = new JTable(taskTableModel);
 
             add(new JScrollPane(taskTable), BorderLayout.CENTER);
 
-            JButton backButton = new JButton("Back");
+            JButton backButton = new StyledButton("Back", Color.BLUE, new Dimension(100, 40));
+
             backButton.addActionListener(e -> showPanel("MainMenu"));
             add(backButton, BorderLayout.SOUTH);
         }
@@ -94,16 +113,19 @@ public class ToDoListApp {
     }
 
     class AddTaskPanel extends JPanel {
+
         AddTaskPanel() {
             setLayout(new BorderLayout());
-            JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+            setBackground(Color.WHITE);  // Set background color for the full body
+            JPanel inputPanel = new JPanel(new GridLayout(20, 10));
+            inputPanel.setOpaque(false);  // Make the panel transparent to show the background color of the parent panel
 
             JLabel titleLabel = new JLabel("Task:");
             JTextField titleField = new JTextField();
             JLabel descriptionLabel = new JLabel("Description:");
             JTextArea descriptionArea = new JTextArea();
 
-            JButton addButton = new JButton("Add Task");
+            JButton addButton = new StyledButton("Add Task", Color.BLUE, new Dimension(100, 40));
             addButton.addActionListener(e -> {
                 String title = titleField.getText().trim();
                 String description = descriptionArea.getText().trim();
@@ -126,11 +148,13 @@ public class ToDoListApp {
     }
 
     class EditTaskPanel extends JPanel {
+
         private JList<Task> taskList;
         private DefaultListModel<Task> taskListModel;
 
         EditTaskPanel() {
             setLayout(new BorderLayout());
+            setBackground(Color.WHITE);  // Set background color for the full body
 
             taskListModel = new DefaultListModel<>();
             taskList = new JList<>(taskListModel);
@@ -144,7 +168,7 @@ public class ToDoListApp {
 
             add(new JScrollPane(taskList), BorderLayout.CENTER);
 
-            JButton backButton = new JButton("Back");
+            JButton backButton = new StyledButton("Back", Color.BLUE, new Dimension(100, 40));
             backButton.addActionListener(e -> showPanel("MainMenu"));
             add(backButton, BorderLayout.SOUTH);
         }
@@ -172,16 +196,18 @@ public class ToDoListApp {
     }
 
     class DeleteTaskPanel extends JPanel {
+
         private JList<Task> taskList;
         private DefaultListModel<Task> taskListModel;
 
         DeleteTaskPanel() {
             setLayout(new BorderLayout());
+            setBackground(Color.LIGHT_GRAY);  // Set background color for the full body
 
             taskListModel = new DefaultListModel<>();
             taskList = new JList<>(taskListModel);
 
-            JButton deleteButton = new JButton("Delete Selected Task");
+            JButton deleteButton = new StyledButton("Delete Selected Task", Color.BLUE, new Dimension(200, 40));
             deleteButton.addActionListener(e -> {
                 Task selectedTask = taskList.getSelectedValue();
                 if (selectedTask != null) {
@@ -193,7 +219,7 @@ public class ToDoListApp {
             add(new JScrollPane(taskList), BorderLayout.CENTER);
             add(deleteButton, BorderLayout.NORTH);
 
-            JButton backButton = new JButton("Back");
+            JButton backButton = new StyledButton("Back", Color.BLUE, new Dimension(100, 40));
             backButton.addActionListener(e -> showPanel("MainMenu"));
             add(backButton, BorderLayout.SOUTH);
         }
@@ -205,4 +231,19 @@ public class ToDoListApp {
             }
         }
     }
+
+    class StyledButton extends JButton {
+
+        StyledButton(String text, Color bgColor, Dimension size) {
+            super(text);
+            setFont(new Font("Arial", Font.PLAIN, 16));
+            setBackground(bgColor); // Set background color
+            setForeground(Color.WHITE);
+            setFocusPainted(false);
+            setPreferredSize(size); // Set width and height
+            // Set padding (top, left, bottom, right)
+            setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20));
+        }
+    }
+
 }
